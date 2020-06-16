@@ -1,15 +1,15 @@
-if (process.env.NODE_ENV !== 'prod') {
+if (process.env.NODE_ENV === 'dev') {
     require('dotenv').config()
 }
 
 import EveClient from './client/EveClient'
 
-import config from './config.json'
+import { owners, prefix } from './config.json'
 
 const client = new EveClient({
     token: process.env.TOKEN,
-    owners: config.owners,
-    prefix: config.prefix,
+    owners,
+    prefix
 })
 
 client.start()

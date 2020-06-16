@@ -4,12 +4,12 @@ class ReadyListener extends Listener {
     constructor() {
         super('ready', {
             emitter: 'client',
-            event: 'ready',
+            event: 'ready'
         })
     }
 
     exec(): void {
-        console.log(`${this.client.user?.username} reporting for duty!`)
+        this.client.logger.log('info', `${this.client.user?.username} reporting for duty!`)
     }
 }
 

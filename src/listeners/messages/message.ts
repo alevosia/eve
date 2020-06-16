@@ -6,11 +6,12 @@ class MessageListener extends Listener {
         super('message', {
             emitter: 'client',
             event: 'message',
+            category: 'messages'
         })
     }
 
     exec(message: Message): void {
-        console.log(`${message.author.username}: ${message.content}`)
+        this.client.logger.log('info', `${message.author.username}: ${message.content}`)
     }
 }
 
