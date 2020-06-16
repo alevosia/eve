@@ -1,8 +1,16 @@
+# dependencies
 node_modules/
+
+# generated build files
 build/
-.env
 
 # logging
 logs/
 *.log
 *-audit.json
+
+# persistence
+*.sqlite
+
+# environment variables
+.env

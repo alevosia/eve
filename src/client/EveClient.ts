@@ -8,6 +8,7 @@ import {
 import { Logger } from 'winston'
 import { join } from 'path'
 import { logger } from '../util/logger'
+import { Settings } from '../constants'
 import Guild from '../models/Guild'
 
 declare module 'discord-akairo' {
@@ -46,6 +47,8 @@ class EveClient extends AkairoClient {
         this.config = config
         this.logger = logger
 
+        process.on('unhandledRejection', (error: any) => this.logger.error(error.stack))
+
         this.settings = new SequelizeProvider(Guild, {
             idColumn: 'guild_id',
             dataColumn: 'settings'
@@ -53,7 +56,13 @@ class EveClient extends AkairoClient {
 
         this.commandHandler = new CommandHandler(this, {
             directory: join(__dirname, '..', 'commands'),
-            prefix: this.config.prefix,
+            prefix: (message) => {
+                if (message.guild) {
+                    return this.settings.get(message.guild.id, Settings.PREFIX, config.prefix)
+                }
+
+                return config.prefix
+            },
             allowMention: true,
             commandUtil: true,
             handleEdits: true
@@ -72,6 +81,7 @@ class EveClient extends AkairoClient {
         this.logger.log('info', 'Initiating start sequence...')
 
         await this.settings.init()
+        this.logger.log('info', 'Guild settings initialized.')
 
         this.commandHandler.useInhibitorHandler(this.inhibitorHandler)
         this.commandHandler.useListenerHandler(this.listenerHandler)

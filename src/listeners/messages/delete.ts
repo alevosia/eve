@@ -1,6 +1,7 @@
 import { Listener } from 'discord-akairo'
 import { Message, TextChannel } from 'discord.js'
-import { MESSAGE_LOGS_CHANNEL_ID } from '../../constants'
+import { Settings } from '../../constants'
+import { FIREBRICK } from '../../constants'
 
 class MessageDeleteListener extends Listener {
     constructor() {
@@ -15,16 +16,25 @@ class MessageDeleteListener extends Listener {
         if (!message.guild) return
 
         const channelId: string = this.client.settings.get(
-            message?.guild.id,
-            MESSAGE_LOGS_CHANNEL_ID,
+            message.guild.id,
+            Settings.MESSAGE_LOGS_CHANNEL_ID,
             null
         )
 
-        this.client.logger.log('info', `Message Logs Channel ID: ${channelId}`)
-
         if (channelId) {
             const channel = this.client.channels.cache.get(channelId) as TextChannel
-            return channel.send(`${message.author}: ${message.content}`)
+
+            const name = message.member?.displayName
+            const avatarUrl = message.author.displayAvatarURL()
+
+            const embed = this.client.util
+                .embed()
+                .setColor(FIREBRICK)
+                .setAuthor(name, avatarUrl)
+                .addField('Deleted Message', message.content)
+                .setTimestamp()
+
+            return channel.send(embed)
         }
     }
 }

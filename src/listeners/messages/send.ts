@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo'
 import { Message } from 'discord.js'
 
-class MessageListener extends Listener {
+class MessageSendListener extends Listener {
     constructor() {
         super('message', {
             emitter: 'client',
@@ -11,8 +11,10 @@ class MessageListener extends Listener {
     }
 
     exec(message: Message): void {
+        if (message.author.bot) return
+
         this.client.logger.log('info', `${message.author.username}: ${message.content}`)
     }
 }
 
-export default MessageListener
+export default MessageSendListener
