@@ -1,6 +1,6 @@
 import { Listener } from 'discord-akairo'
 import { Message, TextChannel } from 'discord.js'
-import { Settings } from '../../constants'
+import { MESSAGE_LOGS_CHANNEL_ID } from '../../constants'
 
 class MessageDeleteListener extends Listener {
     constructor() {
@@ -16,7 +16,7 @@ class MessageDeleteListener extends Listener {
 
         const channelId: string = this.client.settings.get(
             message?.guild.id,
-            Settings.MESSAGE_LOGS_CHANNEL_ID,
+            MESSAGE_LOGS_CHANNEL_ID,
             null
         )
 

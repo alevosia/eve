@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo'
 import { Message, Channel } from 'discord.js'
-import { Settings } from '../../constants'
+import { MESSAGE_LOGS_CHANNEL_ID, MEMBER_LOGS_CHANNEL_ID } from '../../constants'
 
 interface Arguments {
     type: 'messages' | 'members'
@@ -33,17 +33,13 @@ class SayCommand extends Command {
         this.client.logger.log('info', channel.type)
 
         if (type === 'messages') {
-            this.client.settings.set(
-                message.guild!.id,
-                Settings.MESSAGE_LOGS_CHANNEL_ID,
-                channel.id
-            )
+            this.client.settings.set(message.guild!.id, MESSAGE_LOGS_CHANNEL_ID, channel.id)
 
             return message?.util?.send(`Message logs channel has been to ${channel?.toString()}.`)
         }
 
         if (type === 'members') {
-            this.client.settings.set(message.guild!.id, Settings.MEMBER_LOGS_CHANNEL_ID, channel.id)
+            this.client.settings.set(message.guild!.id, MEMBER_LOGS_CHANNEL_ID, channel.id)
             return message?.util?.send(`Member logs channel has been to ${channel?.toString()}.`)
         }
     }

@@ -1,8 +1,0 @@
-export enum Colors {
-    MAYA_BLUE = '#73C2FB'
-}
-
-export enum Settings {
-    MESSAGE_LOGS_CHANNEL_ID = 'MESSAGE_LOGS_CHANNEL_ID',
-    MEMBER_LOGS_CHANNEL_ID = 'MEMBER_LOGS_CHANNEL_ID'
-}
