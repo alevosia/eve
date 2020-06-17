@@ -23,7 +23,6 @@ class MessageDeleteListener extends Listener {
 
         if (channelId) {
             const channel = this.client.channels.cache.get(channelId) as TextChannel
-
             const name = message.member?.displayName
             const avatarUrl = message.author.displayAvatarURL()
 
@@ -31,7 +30,8 @@ class MessageDeleteListener extends Listener {
                 .embed()
                 .setColor(FIREBRICK)
                 .setAuthor(name, avatarUrl)
-                .addField('Deleted Message', message.content)
+                .setTitle('Deleted Message')
+                .setDescription(message.content)
                 .setTimestamp()
 
             return channel.send(embed)
