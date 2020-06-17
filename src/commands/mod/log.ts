@@ -1,13 +1,13 @@
 import { Command } from 'discord-akairo'
-import { Message, Channel } from 'discord.js'
+import { Message, TextChannel } from 'discord.js'
 import { Settings } from '../../constants'
 
 interface Arguments {
-    logType: 'message' | 'messages' | 'member' | 'members'
-    channel?: Channel
+    logType: 'message' | 'member'
+    channel?: TextChannel
 }
 
-class SayCommand extends Command {
+class LogCommand extends Command {
     constructor() {
         super('log', {
             aliases: ['log'],
@@ -18,11 +18,28 @@ class SayCommand extends Command {
             args: [
                 {
                     id: 'logType',
-                    type: 'string'
+                    type: [
+                        ['message', 'messages'],
+                        ['member', 'members']
+                    ],
+                    prompt: {
+                        start: (message: Message) =>
+                            `${message.author}, what do you want to log? ` +
+                            `Type in \`messages\` if you want to log edited and deleted messages. ` +
+                            `Type in \`members\` if you want to log members joining, leaving, kicked, etc.`,
+                        retry: (message: Message) =>
+                            `${message.author}, invalid log type provided. Please try again.`
+                    }
                 },
                 {
                     id: 'channel',
-                    type: 'channel'
+                    type: 'textChannel',
+                    prompt: {
+                        start: (message: Message) =>
+                            `${message.author}, which text channel do you want to log it?`,
+                        retry: (message: Message) =>
+                            `${message.author}, invalid text channel provided. Please try again.`
+                    }
                 }
             ]
         })
@@ -33,7 +50,7 @@ class SayCommand extends Command {
 
         this.client.logger.log('info', channel.type)
 
-        if (logType === 'message' || logType === 'messages') {
+        if (logType === 'message') {
             await this.client.settings.set(
                 message.guild!.id,
                 Settings.MESSAGE_LOGS_CHANNEL_ID,
@@ -45,7 +62,7 @@ class SayCommand extends Command {
             )
         }
 
-        if (logType === 'member' || logType === 'members') {
+        if (logType === 'member') {
             await this.client.settings.set(
                 message.guild!.id,
                 Settings.MEMBER_LOGS_CHANNEL_ID,
@@ -59,4 +76,4 @@ class SayCommand extends Command {
     }
 }
 
-export default SayCommand
+export default LogCommand
