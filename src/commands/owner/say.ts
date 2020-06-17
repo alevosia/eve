@@ -22,7 +22,7 @@ class SayCommand extends Command {
         })
     }
 
-    async exec(message: Message, args: Arguments): Promise<Message | undefined> {
+    async exec(message: Message, args: Arguments): Promise<Message | void> {
         await message.delete({ reason: 'say command' })
         return message?.util?.send(args.text)
     }
