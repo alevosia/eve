@@ -18,8 +18,10 @@ class AvatarCommand extends Command {
                     type: 'user',
                     description: 'The user you want to get the avatar of.',
                     prompt: {
-                        start: 'Who would you like to get the avatar of?',
-                        retry: 'Invalid user. Please try again.',
+                        start: (message: Message) =>
+                            `${message.author}, who would you like to get the avatar of?`,
+                        retry: (message: Message) =>
+                            `${message.author}, invalid user. Please try again.`,
                         optional: true
                     },
                     default: (message: Message) => message.author
