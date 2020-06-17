@@ -3,7 +3,7 @@ import Discord, { Message } from 'discord.js'
 import { formatMilliseconds } from '../../util/formatMilliseconds'
 import { MAYA_BLUE } from '../../constants'
 
-class StatusCommand extends Command {
+class StatsCommand extends Command {
     constructor() {
         super('stats', {
             aliases: ['stats'],
@@ -13,7 +13,7 @@ class StatusCommand extends Command {
         })
     }
 
-    exec(message: Message): Promise<Message> | undefined {
+    async exec(message: Message): Promise<Message | void> {
         const embed = this.client?.util
             ?.embed()
             .setColor(MAYA_BLUE)
@@ -41,4 +41,4 @@ class StatusCommand extends Command {
     }
 }
 
-export default StatusCommand
+export default StatsCommand
