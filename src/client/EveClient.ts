@@ -5,11 +5,13 @@ import {
     ListenerHandler,
     SequelizeProvider
 } from 'discord-akairo'
+import { Message } from 'discord.js'
 import { Logger } from 'winston'
 import { join } from 'path'
 import { logger } from '../util/logger'
 import { Settings } from '../constants'
 import Guild from '../models/Guild'
+import { __rootdir__ } from '../root'
 
 declare module 'discord-akairo' {
     interface AkairoClient {
@@ -25,7 +27,7 @@ declare module 'discord-akairo' {
 interface EveOptions {
     owners?: string | string[]
     token?: string
-    prefix: string
+    defaultPrefix: string
 }
 
 class EveClient extends AkairoClient {
@@ -55,25 +57,56 @@ class EveClient extends AkairoClient {
         })
 
         this.commandHandler = new CommandHandler(this, {
-            directory: join(__dirname, '..', 'commands'),
+            directory: join(__rootdir__, 'commands'),
             prefix: (message) => {
                 if (message.guild) {
-                    return this.settings.get(message.guild.id, Settings.PREFIX, config.prefix)
+                    return this.settings.get(
+                        message.guild.id,
+                        Settings.PREFIX,
+                        config.defaultPrefix
+                    )
                 }
 
-                return config.prefix
+                return config.defaultPrefix
             },
+            blockClient: true,
+            blockBots: true,
             allowMention: true,
+            handleEdits: true,
             commandUtil: true,
-            handleEdits: true
+            commandUtilLifetime: 150000, // 5m
+            defaultCooldown: 15000, // 15s
+            ignoreCooldown: [],
+            argumentDefaults: {
+                prompt: {
+                    retries: 3,
+                    time: 10000,
+                    cancelWord: 'cancel',
+                    stopWord: 'stop',
+                    optional: false,
+                    infinite: false,
+                    limit: 100,
+                    breakout: true,
+                    start: null,
+
+                    retry: (message: Message): string =>
+                        `${message.author}, invalid command argument(s) provided. Please try again.`,
+                    timeout: (message: Message): string =>
+                        `${message.author}, you have run out of time. Command has been cancelled.`,
+                    ended: (message: Message): string =>
+                        `${message.author}, you have reached the maximum amount of tries. Command has been cancelled.`,
+                    cancel: (message: Message): string =>
+                        `${message.author}, command has been cancelled.`
+                }
+            }
         })
 
         this.inhibitorHandler = new InhibitorHandler(this, {
-            directory: join(__dirname, '..', 'inhibitors')
+            directory: join(__rootdir__, 'inhibitors')
         })
 
         this.listenerHandler = new ListenerHandler(this, {
-            directory: join(__dirname, '..', 'listeners')
+            directory: join(__rootdir__, 'listeners')
         })
     }
 

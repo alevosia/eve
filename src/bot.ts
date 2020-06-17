@@ -4,12 +4,12 @@ if (process.env.NODE_ENV === 'dev') {
 
 import EveClient from './client/EveClient'
 
-import { owners, prefix } from './config.json'
+import { owners, defaultPrefix } from './config.json'
 
 const client = new EveClient({
     token: process.env.TOKEN,
     owners,
-    prefix
+    defaultPrefix
 })
 
 client.start()
