@@ -76,7 +76,7 @@ class EveClient extends AkairoClient {
             commandUtil: true,
             commandUtilLifetime: 150000, // 5m
             defaultCooldown: 15000, // 15s
-            ignoreCooldown: [],
+            ignoreCooldown: config.owners,
             argumentDefaults: {
                 prompt: {
                     retries: 3,
