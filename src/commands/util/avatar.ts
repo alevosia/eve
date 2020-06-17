@@ -6,7 +6,7 @@ interface Arguments {
     user: User
 }
 
-class PrefixCommand extends Command {
+class AvatarCommand extends Command {
     constructor() {
         super('avatar', {
             aliases: ['avatar'],
@@ -44,4 +44,4 @@ class PrefixCommand extends Command {
     }
 }
 
-export default PrefixCommand
+export default AvatarCommand
