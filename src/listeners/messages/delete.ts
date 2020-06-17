@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo'
 import { Message, TextChannel } from 'discord.js'
 import { Settings } from '../../constants'
-import { FIREBRICK } from '../../constants'
+import { Colors } from '../../constants'
 
 class MessageDeleteListener extends Listener {
     constructor() {
@@ -28,7 +28,7 @@ class MessageDeleteListener extends Listener {
 
             const embed = this.client.util
                 .embed()
-                .setColor(FIREBRICK)
+                .setColor(Colors.FIREBRICK)
                 .setAuthor(name, avatarUrl)
                 .setTitle('Deleted Message')
                 .setDescription(message.content)

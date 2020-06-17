@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo'
 import { Message, User } from 'discord.js'
-import { MAYA_BLUE } from '../../constants'
+import { Colors } from '../../constants'
 
 interface Arguments {
     user: User
@@ -33,7 +33,7 @@ class AvatarCommand extends Command {
     async exec(message: Message, { user }: Arguments): Promise<Message | void> {
         const embed = this.client.util
             .embed()
-            .setColor(MAYA_BLUE)
+            .setColor(Colors.MAYA_BLUE)
             .setTitle(`${user.username}'s avatar`)
             .setImage(
                 user.displayAvatarURL({

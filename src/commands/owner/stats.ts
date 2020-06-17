@@ -1,7 +1,7 @@
 import Akairo, { Command } from 'discord-akairo'
 import Discord, { Message } from 'discord.js'
 import { formatMilliseconds } from '../../util/formatMilliseconds'
-import { MAYA_BLUE } from '../../constants'
+import { Colors } from '../../constants'
 
 class StatsCommand extends Command {
     constructor() {
@@ -16,7 +16,7 @@ class StatsCommand extends Command {
     async exec(message: Message): Promise<Message | void> {
         const embed = this.client?.util
             ?.embed()
-            .setColor(MAYA_BLUE)
+            .setColor(Colors.MAYA_BLUE)
             .setTitle(`${this.client.user?.username} Statistics`)
             .addField(
                 'Discord',
