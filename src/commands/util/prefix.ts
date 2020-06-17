@@ -3,7 +3,7 @@ import { Message } from 'discord.js'
 import { Settings } from '../../constants'
 
 interface Arguments {
-    prefix: string
+    newPrefix: string
 }
 
 class PrefixCommand extends Command {
@@ -15,18 +15,34 @@ class PrefixCommand extends Command {
             userPermissions: ['ADMINISTRATOR'],
             args: [
                 {
-                    id: 'prefix',
-                    type: 'string'
+                    id: 'newPrefix',
+                    type: 'string',
+                    prompt: {
+                        start: (message: Message) =>
+                            `${message.author}, what prefix would you like to use?`,
+                        retry: (message: Message) =>
+                            `${message.author}, invalid prefix. Please try again.`
+                    }
                 }
             ]
         })
     }
 
-    async exec(message: Message, { prefix }: Arguments): Promise<Message | void> {
-        if (!prefix) return
+    async exec(message: Message, { newPrefix }: Arguments): Promise<Message | void> {
+        if (!newPrefix) return
 
-        await this.client.settings.set(message.guild!.id, Settings.PREFIX, prefix)
-        return message.channel.send(`My command prefix has been set to \`${prefix}\`.`)
+        const currentPrefix = await this.client.settings.get(
+            message.guild!.id,
+            Settings.PREFIX,
+            this.client.config.defaultPrefix
+        )
+
+        if (currentPrefix === newPrefix) {
+            return message.util?.reply(`my command prefix is already set to \`${newPrefix}\`.`)
+        }
+
+        await this.client.settings.set(message.guild!.id, Settings.PREFIX, newPrefix)
+        return message.util?.reply(`my command prefix has been set to \`${newPrefix}\`.`)
     }
 }
 
