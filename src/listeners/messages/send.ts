@@ -11,9 +11,17 @@ class MessageSendListener extends Listener {
     }
 
     exec(message: Message): void {
-        if (message.author.bot) return
+        if (message.author.bot) {
+            return
+        }
 
-        this.client.logger.log('info', `${message.author.username}: ${message.content}`)
+        if (message.channel.type === 'dm') {
+            this.client.logger.info(`[DM] - ${message.author.username}: ${message.content}`)
+        } else {
+            this.client.logger.info(
+                `[${message.guild?.name}] #${message.channel.name} - ${message.author.username}: ${message.content}`
+            )
+        }
     }
 }
 
