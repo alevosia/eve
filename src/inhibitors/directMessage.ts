@@ -9,7 +9,7 @@ class DirectMessageInhibitor extends Inhibitor {
     }
 
     exec(message: Message): boolean {
-        return !message.guild
+        return message.channel.type === 'dm'
     }
 }
 
