@@ -139,8 +139,8 @@ class EveClient extends AkairoClient {
         this.logger.info('Listeners loaded.')
     }
 
-    start(): void {
-        this._init()
+    async start(): Promise<void> {
+        await this._init()
         this.login(this.config.token)
     }
 }
