@@ -10,7 +10,8 @@ A Discord moderation bot written in TypeScript using Discord.js and Akairo.
 
 
 ### Deployment
-> npm run build
+> npm run build 
+
 > npm start
  
 <br />
