@@ -9,7 +9,7 @@ class ReadyListener extends Listener {
     }
 
     exec(): void {
-        this.client.logger.log('info', `${this.client.user?.username} reporting for duty!`)
+        this.client.logger.info(`${this.client.user?.username} reporting for duty!`)
     }
 }
 

@@ -10,8 +10,7 @@ class CommandBlockedListener extends Listener {
     }
 
     exec(message: Message, command: Command, reason: string): void {
-        this.client.logger.log(
-            'info',
+        this.client.logger.info(
             `${message.author.username} was blocked from using ${command.id} because of ${reason}!`
         )
     }

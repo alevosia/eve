@@ -49,8 +49,10 @@ class EveClient extends AkairoClient {
         this.config = config
         this.logger = logger
 
+        // error logging
         process.on('unhandledRejection', (error: any) => this.logger.error(error.stack))
 
+        // settings provider
         this.settings = new SequelizeProvider(Guild, {
             idColumn: 'guild_id',
             dataColumn: 'settings'
@@ -111,11 +113,13 @@ class EveClient extends AkairoClient {
     }
 
     private async _init(): Promise<void> {
-        this.logger.log('info', 'Initiating start sequence...')
+        this.logger.info('Initiating start sequence...')
 
         await this.settings.init()
-        this.logger.log('info', 'Guild settings initialized.')
+        this.logger.info('Guild settings initialized.')
 
+        // Since the inhibitor and listener handlers are a part of the command handling process,
+        // the command handler has to know them
         this.commandHandler.useInhibitorHandler(this.inhibitorHandler)
         this.commandHandler.useListenerHandler(this.listenerHandler)
 
@@ -126,13 +130,13 @@ class EveClient extends AkairoClient {
         })
 
         this.commandHandler.loadAll()
-        this.logger.log('info', 'Commands loaded.')
+        this.logger.info('Commands loaded.')
 
         this.inhibitorHandler.loadAll()
-        this.logger.log('info', 'Inhibitors loaded.')
+        this.logger.info('Inhibitors loaded.')
 
         this.listenerHandler.loadAll()
-        this.logger.log('info', 'Listeners loaded.')
+        this.logger.info('Listeners loaded.')
     }
 
     start(): void {
