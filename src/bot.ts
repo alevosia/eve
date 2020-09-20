@@ -1,5 +1,7 @@
+import dotenv from 'dotenv'
+
 if (process.env.NODE_ENV === 'development') {
-    require('dotenv').config()
+    dotenv.config()
 }
 
 import EveClient from './client/EveClient'
