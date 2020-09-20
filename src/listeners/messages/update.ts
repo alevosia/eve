@@ -1,10 +1,7 @@
 import { Listener } from 'discord-akairo'
 import { Message, TextChannel } from 'discord.js'
-import { diffWords } from 'diff'
 import { Settings } from '../../constants'
-import { promisify } from 'util'
-
-const asyncDiffWords = promisify(diffWords)
+import { diffWords } from '../../util'
 
 class MessageUpdateListener extends Listener {
     constructor() {
@@ -16,49 +13,80 @@ class MessageUpdateListener extends Listener {
     }
 
     async exec(oldMessage: Message, newMessage: Message): Promise<Message | void> {
+        // Ignore bots, DMs, and unchanged content
         if (
-            !newMessage.guild ||
             newMessage.author.bot ||
+            !newMessage.guild ||
+            newMessage.channel.type === 'dm' ||
             oldMessage.content === newMessage.content
         ) {
             return
         }
 
-        const channelId: string = this.client.settings.get(
+        // Get the guild's message logs channel's id from guild settings
+        const channelId = this.client.settings.get(
             newMessage.guild.id,
             Settings.MESSAGE_LOGS_CHANNEL_ID,
             null
         )
 
-        if (channelId) {
-            const channel = this.client.channels.cache.get(channelId) as TextChannel
+        if (!channelId) {
+            return
+        }
 
-            const old = oldMessage.content.replace(/\*|~|_|\||`/g, '')
-            const updated = newMessage.content.replace(/\*|~|_|\||`/g, '')
-            const changes = await asyncDiffWords(old, updated)
+        const channel = this.client.channels.cache.get(channelId)
 
-            if (!changes) return
+        // Message logs channel must be a TextChannel otherwise,
+        // delete the id from the guild settings
+        if (!(channel instanceof TextChannel)) {
+            this.client.settings.delete(newMessage.guild.id, Settings.MESSAGE_LOGS_CHANNEL_ID)
+            return
+        }
 
-            const str = changes.reduce((total, change) => {
-                if (change.removed) {
-                    return total.concat(`~~${change.value}~~`)
-                } else if (change.added) {
-                    return total.concat(`**${change.value}**`)
-                } else {
-                    return total.concat(change.value)
-                }
-            }, '')
+        // Strip markdown characters
+        const oldContent = oldMessage.content.replace(/\*|~|_|\||`/g, '')
+        const updatedContent = newMessage.content.replace(/\*|~|_|\||`/g, '')
 
-            const authorName = newMessage.member?.displayName
-            const authorAvatarUrl = newMessage.author.displayAvatarURL()
-            const embed = this.client.util
-                .embed()
-                .setAuthor(authorName, authorAvatarUrl)
-                .setTitle('Edited Message')
-                .setDescription(str)
-                .setTimestamp()
+        // Get the difference between the two messages
+        const changes = await diffWords(oldContent, updatedContent)
 
-            return channel.send(embed)
+        if (!changes) {
+            return
+        }
+
+        // Strike-through for removed content and bold characters for added content
+        const str = changes.reduce((total, { removed, added, value }) => {
+            if (added) {
+                return total.concat(`**${value}**`)
+            } else if (removed) {
+                return total.concat(`~~${value}~~`)
+            } else {
+                return total.concat(value)
+            }
+        }, '')
+
+        // Create the embed and send
+        const authorName = newMessage.member?.displayName
+        const authorAvatarUrl = newMessage.author.displayAvatarURL()
+        const embed = this.client.util
+            .embed()
+            .setAuthor(authorName, authorAvatarUrl)
+            .setTitle('Edited Message')
+            .setDescription(str)
+            .setFooter(`Channel: ${newMessage.channel.name}`)
+            .setTimestamp()
+
+        try {
+            return await channel.send(embed)
+        } catch (error) {
+            this.client.logger.error(`[MessageUpdateListener] - ${error.name}`)
+            this.client.settings.delete(newMessage.guild.id, Settings.MESSAGE_LOGS_CHANNEL_ID)
+
+            return newMessage.guild.owner?.send(
+                `I am unable to send message logs to ${channel}. ` +
+                    `I have reset the message logs channel from my settings. ` +
+                    `Make sure I have the proper permissions and set the channel again.`
+            )
         }
     }
 }
