@@ -5,7 +5,7 @@
 	"main": "src/app.ts",
 	"scripts": {
 		"dev": "env NODE_ENV=development nodemon src/bot.ts",
-		"build": "rimraf build && npm run compile",
+		"build": "npm run lint && rimraf build && npm run compile",
 		"start": "env NODE_ENV=production node build/bot.js",
 		"compile": "tsc",
 		"lint": "eslint .",
