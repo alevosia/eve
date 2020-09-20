@@ -1,4 +1,4 @@
-# Eve <img src="https://i.imgur.com/WrjNQi4.png" width="400" align="right">
+# Eve <img src="https://i.imgur.com/WrjNQi4.png" width="300" align="right">
 
 A Discord moderation bot written in TypeScript using Discord.js and Akairo.
 
