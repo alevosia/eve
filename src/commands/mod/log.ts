@@ -14,6 +14,7 @@ class LogCommand extends Command {
             description: 'Set the channels to send message or member logs.',
             category: 'mod',
             channel: 'guild',
+            clientPermissions: ['SEND_MESSAGES'],
             userPermissions: ['VIEW_AUDIT_LOG', 'MANAGE_MESSAGES'],
             args: [
                 {
@@ -48,7 +49,7 @@ class LogCommand extends Command {
     async exec(message: Message, { logType, channel }: Arguments): Promise<Message | void> {
         if (!logType || !channel) return
 
-        this.client.logger.log('info', channel.type)
+        this.client.logger.info(channel.type)
 
         if (logType === 'message') {
             await this.client.settings.set(
