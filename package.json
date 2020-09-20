@@ -4,9 +4,9 @@
 	"description": "A Discord bot",
 	"main": "src/app.ts",
 	"scripts": {
-		"dev": "env NODE_ENV=dev nodemon src/bot.ts",
+		"dev": "env NODE_ENV=development nodemon src/bot.ts",
 		"build": "rimraf build && npm run compile",
-		"start": "env NODE_ENV=prod node build/bot.js",
+		"start": "env NODE_ENV=production node build/bot.js",
 		"compile": "tsc",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix"
