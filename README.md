@@ -3,7 +3,6 @@
 A Discord moderation bot written in TypeScript using Discord.js and Akairo.
 
 ## Scripts
-<hr /> 
 
 ### Development
 > npm run dev 
