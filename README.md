@@ -1,3 +1,19 @@
-<p align="center">
-    <img src="https://i.imgur.com/oC1aqDL.jpg" width="100%" title="TypeScript" alt="TypeScript"> <br />
-</p>
+# Eve <img src="https://i.imgur.com/JxPpzpc.png" width="500" align="right">
+
+A Discord moderation bot written in TypeScript using Discord.js and Akairo.
+
+## Scripts
+<hr /> 
+
+### Development
+> npm run dev 
+
+
+### Deployment
+> npm run build
+> npm start
+ 
+<br />
+<br />
+
+*foreign contaminant*
