@@ -41,6 +41,10 @@ class AvatarCommand extends Command {
                     dynamic: true
                 })
             )
+            .setFooter(
+                `Request by ${message.member?.displayName}`,
+                message.author.displayAvatarURL()
+            )
 
         return message.util?.send(embed)
     }
