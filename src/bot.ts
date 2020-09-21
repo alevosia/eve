@@ -1,11 +1,9 @@
 import dotenv from 'dotenv'
-
 if (process.env.NODE_ENV === 'development') {
     dotenv.config()
 }
 
 import EveClient from './client/EveClient'
-
 import { owners, defaultPrefix } from './config.json'
 
 const client = new EveClient({
@@ -15,3 +13,5 @@ const client = new EveClient({
 })
 
 client.start()
+
+// TODO: Handle blocked users
