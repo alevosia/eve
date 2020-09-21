@@ -11,19 +11,32 @@ class MissingPermissionsListener extends Listener {
 
     async exec(
         message: Message,
-        _: Command,
+        command: Command,
         type: string,
-        missing: unknown
+        missing: string[]
     ): Promise<Message | void> {
-        if (type === 'user') {
-            return message.util?.reply(
-                `you're missing the permission \`${missing}\` to execute this command.`
-            )
-        } else {
-            return message.util?.reply(
-                `I'm missing the permission \`${missing}\` to execute this command.`
-            )
+        // Generate the reply
+        const subject = type === 'user' ? "You're" : "I'm"
+        const permissions = missing.join(' | ')
+        const commandAlias = command.aliases[0]
+
+        const replyContent =
+            `${subject} missing the permission(s) \`${permissions}\` ` +
+            `to execute the command \`${commandAlias}\`.`
+
+        if (message.channel.type === 'text') {
+            const permissions = message.channel.permissionsFor(this.client.user!)
+
+            // Send reply as DM if client doesn't have permission to
+            // send messages on the TextChannel
+            if (!permissions?.has('SEND_MESSAGES')) {
+                return message.author.send(replyContent)
+            }
+
+            return message.util?.reply(replyContent)
         }
+
+        return message.author.send(replyContent)
     }
 }
 
