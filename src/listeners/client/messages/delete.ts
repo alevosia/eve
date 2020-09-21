@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo'
 import { Message, TextChannel } from 'discord.js'
-import { Settings } from '../../constants'
-import { Colors } from '../../constants'
+import { Settings } from '../../../constants'
+import { Colors } from '../../../constants'
 
 class MessageDeleteListener extends Listener {
     constructor() {

@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo'
 import { Message, TextChannel } from 'discord.js'
-import { Settings } from '../../constants'
-import { diffWords } from '../../util'
+import { Settings } from '../../../constants'
+import { diffWords } from '../../../util'
 
 class MessageUpdateListener extends Listener {
     constructor() {
