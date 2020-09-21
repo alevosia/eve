@@ -12,6 +12,7 @@ class AvatarCommand extends Command {
             aliases: ['avatar'],
             category: 'util',
             channel: 'guild',
+            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
             args: [
                 {
                     id: 'user',

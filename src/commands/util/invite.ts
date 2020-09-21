@@ -7,8 +7,8 @@ class InviteCommand extends Command {
         super('invite', {
             aliases: ['invite'],
             category: 'util',
-            channel: 'guild'
-            // clientPermissions: ['SEND_MESSAGES']
+            channel: 'guild',
+            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS']
         })
     }
 
