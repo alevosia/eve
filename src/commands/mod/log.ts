@@ -49,8 +49,6 @@ class LogCommand extends Command {
     async exec(message: Message, { logType, channel }: Arguments): Promise<Message | void> {
         if (!logType || !channel) return
 
-        this.client.logger.info(channel.type)
-
         if (logType === 'message') {
             await this.client.settings.set(
                 message.guild!.id,
