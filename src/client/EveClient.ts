@@ -37,8 +37,10 @@ class EveClient extends AkairoClient {
                 ownerID: config.owners
             },
             {
-                messageCacheMaxSize: 1000,
-                disableMentions: 'everyone'
+                disableMentions: 'everyone',
+                messageCacheMaxSize: -1,
+                messageCacheLifetime: 432000, // 5 days
+                messageSweepInterval: 86400 // 1 day
             }
         )
 
@@ -76,13 +78,15 @@ class EveClient extends AkairoClient {
             allowMention: true,
             handleEdits: true,
             commandUtil: true,
-            commandUtilLifetime: 150000, // 5m
+            commandUtilLifetime: 300000, // 5m
+            commandUtilSweepInterval: 300000, // 5m
             defaultCooldown: 15000, // 15s
             ignoreCooldown: config.owners,
+            ignorePermissions: config.owners,
             argumentDefaults: {
                 prompt: {
                     retries: 3,
-                    time: 10000,
+                    time: 30000,
                     cancelWord: 'cancel',
                     stopWord: 'stop',
                     optional: false,
@@ -140,8 +144,13 @@ class EveClient extends AkairoClient {
     }
 
     async start(): Promise<void> {
-        await this._init()
-        this.login(this.config.token)
+        try {
+            await this._init()
+            await this.login(this.config.token)
+        } catch (error) {
+            this.logger.error(error)
+            this.destroy()
+        }
     }
 }
 
