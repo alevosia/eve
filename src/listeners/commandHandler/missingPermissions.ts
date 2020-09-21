@@ -27,13 +27,9 @@ class MissingPermissionsListener extends Listener {
         if (message.channel.type === 'text') {
             const permissions = message.channel.permissionsFor(this.client.user!)
 
-            // Send reply as DM if client doesn't have permission to
-            // send messages on the TextChannel
-            if (!permissions?.has('SEND_MESSAGES')) {
-                return message.author.send(replyContent)
+            if (permissions?.has('SEND_MESSAGES')) {
+                return message.util?.reply(replyContent)
             }
-
-            return message.util?.reply(replyContent)
         }
 
         return message.author.send(replyContent)
