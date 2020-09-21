@@ -30,7 +30,7 @@ class InfoCommand extends Command {
         })
     }
 
-    // TODO
+    // TODO: Add more info and use embed
     async exec(message: Message, { entity }: Arguments): Promise<Message | void> {
         if (entity instanceof Guild) {
             return message.util?.send(`Guild Name: ${entity.name}`)
