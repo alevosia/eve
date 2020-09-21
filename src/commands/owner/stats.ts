@@ -8,7 +8,7 @@ class StatsCommand extends Command {
         super('stats', {
             aliases: ['stats'],
             category: 'owner',
-            clientPermissions: ['EMBED_LINKS'],
+            clientPermissions: ['SEND_MESSAGES'],
             ownerOnly: true
         })
     }

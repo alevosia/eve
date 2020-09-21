@@ -11,7 +11,7 @@ class SayCommand extends Command {
             aliases: ['say'],
             category: 'owner',
             ownerOnly: true,
-            clientPermissions: ['MANAGE_MESSAGES'],
+            clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
             args: [
                 {
                     id: 'text',
