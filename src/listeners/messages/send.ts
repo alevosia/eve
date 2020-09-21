@@ -10,7 +10,7 @@ class MessageSendListener extends Listener {
         })
     }
 
-    exec(message: Message): void {
+    async exec(message: Message): Promise<void> {
         if (message.author.bot) {
             return
         }

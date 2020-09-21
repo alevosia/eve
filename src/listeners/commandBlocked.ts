@@ -9,7 +9,7 @@ class CommandBlockedListener extends Listener {
         })
     }
 
-    exec(message: Message, command: Command, reason: string): void {
+    async exec(message: Message, command: Command, reason: string): Promise<void> {
         this.client.logger.info(
             `${message.author.username} was blocked from using ${command.id} because of ${reason}!`
         )
