@@ -3,12 +3,12 @@ import Discord, { Message } from 'discord.js'
 import { formatMilliseconds } from '../../util/formatMilliseconds'
 import { Colors } from '../../constants'
 
-class StatsCommand extends Command {
+class StatusCommand extends Command {
     constructor() {
-        super('stats', {
-            aliases: ['stats'],
+        super('status', {
+            aliases: ['status'],
             category: 'owner',
-            clientPermissions: ['SEND_MESSAGES'],
+            clientPermissions: ['SEND_MESSAGES', 'EMBED_LINKS'],
             ownerOnly: true
         })
     }
@@ -41,4 +41,4 @@ class StatsCommand extends Command {
     }
 }
 
-export default StatsCommand
+export default StatusCommand
