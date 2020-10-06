@@ -1,15 +1,16 @@
 import { AkairoClient, Command } from 'discord-akairo'
-import { CollectorFilter } from 'discord.js'
 import { Message } from 'discord.js'
-import { sleep } from '../../util/sleep'
 import { campaign } from '../../adventure/campaign'
 import { CNode, CNodeType, MyState } from '../../types'
+import { MessageReaction } from 'discord.js'
 
 interface SendEmbedParams {
     client: AkairoClient
     message: Message
     node?: CNode<MyState>
 }
+
+const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
 
 type SendEmbedFn = (params: SendEmbedParams) => Promise<Message | void>
 
@@ -50,8 +51,8 @@ class AdventureCommand extends Command {
         }
 
         const client = this.client
-        const choiceFilter: CollectorFilter = (m: Message) =>
-            m.author.id === message.author.id && !isNaN(Number(m.content))
+        // const choiceFilter: CollectorFilter = (m: Message) =>
+        //     m.author.id === message.author.id && !isNaN(Number(m.content))
 
         let nodeId: string | undefined = 'start'
 
@@ -77,9 +78,27 @@ class AdventureCommand extends Command {
                     embed.setImage(node.imageUrl)
                 }
 
-                message.channel.send(embed)
+                const sent = await message.channel.send(embed)
+
+                await sent.react('▶️')
+
+                const reactionName = await sent
+                    .awaitReactions(
+                        (reaction: MessageReaction) => {
+                            return (
+                                reaction.emoji.name === '▶️' &&
+                                reaction.users.cache.has(message.author.id)
+                            )
+                        },
+                        { max: 1, time: 120000 }
+                    )
+                    .then((coll) => coll.first()?.emoji.name)
+
+                if (!reactionName) {
+                    return message.reply('No response.')
+                }
+
                 nodeId = node.nextNodeId
-                await sleep(3000)
             } else if (node.type === CNodeType.CHOICE) {
                 const embed = client.util
                     .embed()
@@ -91,29 +110,37 @@ class AdventureCommand extends Command {
                     embed.setImage(node.imageUrl)
                 }
 
-                let i = 1
-                const map: Map<number, string | undefined> = new Map()
+                let i = 0
+                const map: Map<string, string | undefined> = new Map()
 
                 for (const key in node.choices) {
-                    embed.addField(i, node.choices[key].text, true)
-                    map.set(i, node.choices[key].nextNodeId)
+                    embed.addField(i + 1, node.choices[key].text, true)
+                    map.set(emojis[i], node.choices[key].nextNodeId)
                     i++
                 }
 
-                await message.channel.send(embed)
+                const sent = await message.channel.send(embed)
 
-                const response = await message.channel
-                    .awaitMessages(choiceFilter, {
-                        max: 1,
-                        time: 60000
-                    })
-                    .then((col) => col.first()?.content)
+                const promises: Promise<MessageReaction>[] = []
+                for (let j = 0; j < map.size; j++) {
+                    promises.push(sent.react(emojis[j]))
+                }
+                await Promise.all(promises)
 
-                if (!response) {
+                const reactionName = await sent
+                    .awaitReactions(
+                        (reaction: MessageReaction) => {
+                            return reaction.users.cache.has(message.author.id)
+                        },
+                        { max: 1, time: 60000 }
+                    )
+                    .then((coll) => coll.first()?.emoji.name)
+
+                if (!reactionName) {
                     return message.reply('No response.')
                 }
 
-                nodeId = map.get(Number(response))
+                nodeId = map.get(reactionName)
             } else {
                 // TODO: Implement INPUT
             }

@@ -24,7 +24,7 @@ export const nodes: CNodes<MyState> = {
             choice_2: {
                 id: 'choice_2',
                 text: 'The Market',
-                nextNodeId: ''
+                nextNodeId: 'node_10'
             }
         }
     },
