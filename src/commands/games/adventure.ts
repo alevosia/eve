@@ -31,11 +31,16 @@ class AdventureCommand extends Command {
             clientPermissions: [
                 'SEND_MESSAGES',
                 'MANAGE_MESSAGES',
+                'ADD_REACTIONS',
                 'EMBED_LINKS',
                 'ATTACH_FILES',
-                'CONNECT',
-                'SPEAK',
-                'PRIORITY_SPEAKER'
+                'VIEW_CHANNEL'
+            ],
+            userPermissions: [
+                'SEND_MESSAGES',
+                'READ_MESSAGE_HISTORY',
+                'ADD_REACTIONS',
+                'VIEW_CHANNEL'
             ],
             channel: 'guild',
             category: 'games',
@@ -53,15 +58,11 @@ class AdventureCommand extends Command {
         const client = this.client
         let nodeId: string | undefined = 'start'
 
-        while (true) {
-            if (!nodeId) {
-                return sendEnd({ client, message })
-            }
-
+        while (nodeId) {
             const node: CNode<MyState> | undefined = campaign.nodes[nodeId]
 
             if (!node) {
-                return sendEnd({ client, message, node })
+                break
             }
 
             if (node.type === CNodeType.READ) {
@@ -87,7 +88,8 @@ class AdventureCommand extends Command {
                     .then((coll) => coll.first()?.emoji.name)
 
                 if (!emojiName) {
-                    return message.reply('no response.')
+                    await message.reply('no response.')
+                    break
                 }
 
                 nodeId = node.nextNodeId
@@ -129,7 +131,7 @@ class AdventureCommand extends Command {
                     .then((coll) => coll.first()?.emoji.name)
 
                 if (!reactionName) {
-                    return message.reply('No response.')
+                    break
                 }
 
                 nodeId = map.get(reactionName)
@@ -137,6 +139,8 @@ class AdventureCommand extends Command {
                 // TODO: Implement INPUT
             }
         }
+
+        return sendEnd({ client, message })
     }
 }
 
