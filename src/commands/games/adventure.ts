@@ -51,9 +51,6 @@ class AdventureCommand extends Command {
         }
 
         const client = this.client
-        // const choiceFilter: CollectorFilter = (m: Message) =>
-        //     m.author.id === message.author.id && !isNaN(Number(m.content))
-
         let nodeId: string | undefined = 'start'
 
         while (true) {
@@ -82,20 +79,15 @@ class AdventureCommand extends Command {
 
                 await sent.react('▶️')
 
-                const reactionName = await sent
-                    .awaitReactions(
-                        (reaction: MessageReaction) => {
-                            return (
-                                reaction.emoji.name === '▶️' &&
-                                reaction.users.cache.has(message.author.id)
-                            )
-                        },
-                        { max: 1, time: 120000 }
-                    )
+                const filter = (reaction: MessageReaction) =>
+                    reaction.emoji.name === '▶️' && reaction.users.cache.has(message.author.id)
+
+                const emojiName = await sent
+                    .awaitReactions(filter, { max: 1, time: 120000 })
                     .then((coll) => coll.first()?.emoji.name)
 
-                if (!reactionName) {
-                    return message.reply('No response.')
+                if (!emojiName) {
+                    return message.reply('no response.')
                 }
 
                 nodeId = node.nextNodeId
@@ -122,18 +114,18 @@ class AdventureCommand extends Command {
                 const sent = await message.channel.send(embed)
 
                 const promises: Promise<MessageReaction>[] = []
+
                 for (let j = 0; j < map.size; j++) {
                     promises.push(sent.react(emojis[j]))
                 }
+
                 await Promise.all(promises)
 
+                const filter = (reaction: MessageReaction) =>
+                    map.has(reaction.emoji.name) && reaction.users.cache.has(message.author.id)
+
                 const reactionName = await sent
-                    .awaitReactions(
-                        (reaction: MessageReaction) => {
-                            return reaction.users.cache.has(message.author.id)
-                        },
-                        { max: 1, time: 60000 }
-                    )
+                    .awaitReactions(filter, { max: 1, time: 60000 })
                     .then((coll) => coll.first()?.emoji.name)
 
                 if (!reactionName) {
