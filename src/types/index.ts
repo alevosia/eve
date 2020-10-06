@@ -39,7 +39,7 @@ export interface NodeHandlerParams {
     message: Message
 }
 
-export type NodeHandler = (params: NodeHandlerParams) => Promise<string | undefined | null>
+export type NodeHandler = (params: NodeHandlerParams) => Promise<string | void | null>
 
 // provide your own shape of state
 export interface Campaign<State> {

@@ -54,7 +54,8 @@ class AdventureCommand extends Command {
         }
 
         const client = this.client
-        let nodeId: string | undefined | null = 'start'
+
+        let nodeId: string | void | null = 'start'
 
         while (nodeId) {
             const node: CNode<MyState> | undefined = campaign.nodes[nodeId]
