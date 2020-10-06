@@ -2,15 +2,13 @@ import { AkairoClient, Command } from 'discord-akairo'
 import { Message } from 'discord.js'
 import { campaign } from '../../adventure/campaign'
 import { CNode, CNodeType, MyState } from '../../types'
-import { MessageReaction } from 'discord.js'
+import { choiceHandler, readHandler } from '../../adventure/handlers'
 
 interface SendEmbedParams {
     client: AkairoClient
     message: Message
     node?: CNode<MyState>
 }
-
-const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
 
 type SendEmbedFn = (params: SendEmbedParams) => Promise<Message | void>
 
@@ -56,7 +54,7 @@ class AdventureCommand extends Command {
         }
 
         const client = this.client
-        let nodeId: string | undefined = 'start'
+        let nodeId: string | undefined | null = 'start'
 
         while (nodeId) {
             const node: CNode<MyState> | undefined = campaign.nodes[nodeId]
@@ -65,78 +63,21 @@ class AdventureCommand extends Command {
                 break
             }
 
-            if (node.type === CNodeType.READ) {
-                const embed = client.util
-                    .embed()
-                    .setTitle(node?.title)
-                    .setDescription(node?.text)
-                    .setColor('AQUA')
-
-                if (node.imageUrl) {
-                    embed.setImage(node.imageUrl)
-                }
-
-                const sent = await message.channel.send(embed)
-
-                await sent.react('▶️')
-
-                const filter = (reaction: MessageReaction) =>
-                    reaction.emoji.name === '▶️' && reaction.users.cache.has(message.author.id)
-
-                const emojiName = await sent
-                    .awaitReactions(filter, { max: 1, time: 120000 })
-                    .then((coll) => coll.first()?.emoji.name)
-
-                if (!emojiName) {
-                    await message.reply('no response.')
+            switch (node.type) {
+                case CNodeType.READ: {
+                    nodeId = await readHandler({ client, message, node })
                     break
                 }
 
-                nodeId = node.nextNodeId
-            } else if (node.type === CNodeType.CHOICE) {
-                const embed = client.util
-                    .embed()
-                    .setTitle(node?.title)
-                    .setDescription(node?.text)
-                    .setColor('AQUA')
-
-                if (node.imageUrl) {
-                    embed.setImage(node.imageUrl)
-                }
-
-                let i = 0
-                const map: Map<string, string | undefined> = new Map()
-
-                for (const key in node.choices) {
-                    embed.addField(i + 1, node.choices[key].text, true)
-                    map.set(emojis[i], node.choices[key].nextNodeId)
-                    i++
-                }
-
-                const sent = await message.channel.send(embed)
-
-                const promises: Promise<MessageReaction>[] = []
-
-                for (let j = 0; j < map.size; j++) {
-                    promises.push(sent.react(emojis[j]))
-                }
-
-                await Promise.all(promises)
-
-                const filter = (reaction: MessageReaction) =>
-                    map.has(reaction.emoji.name) && reaction.users.cache.has(message.author.id)
-
-                const reactionName = await sent
-                    .awaitReactions(filter, { max: 1, time: 60000 })
-                    .then((coll) => coll.first()?.emoji.name)
-
-                if (!reactionName) {
+                case CNodeType.CHOICE: {
+                    nodeId = await choiceHandler({ client, message, node })
                     break
                 }
 
-                nodeId = map.get(reactionName)
-            } else {
-                // TODO: Implement INPUT
+                default: {
+                    nodeId = null
+                    break
+                }
             }
         }
 

@@ -1,3 +1,6 @@
+import { AkairoClient } from 'discord-akairo'
+import { Message } from 'discord.js'
+
 export enum CNodeType {
     INPUT,
     CHOICE,
@@ -29,6 +32,14 @@ export interface CNodes<State> {
     start: CNode<State>
     [id: string]: CNode<State>
 }
+
+export interface NodeHandlerParams {
+    client: AkairoClient
+    node: CNode<MyState>
+    message: Message
+}
+
+export type NodeHandler = (params: NodeHandlerParams) => Promise<string | undefined | null>
 
 // provide your own shape of state
 export interface Campaign<State> {

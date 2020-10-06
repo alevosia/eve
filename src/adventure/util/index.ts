@@ -1,0 +1,1 @@
+export { makeEmbed } from './makeEmbed'
