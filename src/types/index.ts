@@ -26,6 +26,7 @@ export interface CNode<State> {
 }
 
 export interface CNodes<State> {
+    start: CNode<State>
     [id: string]: CNode<State>
 }
 
