@@ -1,11 +1,4 @@
 application:
   name: eve
-  publicly_accessible: true
   organization: QoveryCommunity
   project: eve-project
-routers:
-- name: main
-  routes:
-  - application_name: eve
-    paths:
-    - /
