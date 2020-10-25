@@ -17,7 +17,6 @@ class MessageUpdateListener extends Listener {
         if (
             newMessage.author.bot ||
             !newMessage.guild ||
-            newMessage.channel.type === 'dm' ||
             oldMessage.content === newMessage.content
         ) {
             return
@@ -73,7 +72,7 @@ class MessageUpdateListener extends Listener {
             .setAuthor(authorName, authorAvatarUrl)
             .setTitle('Edited Message')
             .setDescription(str)
-            .setFooter(`Channel: ${newMessage.channel.name}`)
+            .setFooter(`Channel: ${channel.name}`)
             .setTimestamp()
 
         try {
