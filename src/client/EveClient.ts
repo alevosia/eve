@@ -10,7 +10,7 @@ import { Logger } from 'winston'
 import { join } from 'path'
 import { logger } from '../util/logger'
 import { Settings } from '../constants'
-import Guild from '../models/Guild'
+import { Guild, sequelize } from '../models/Guild'
 import { __rootdir__ } from '../root'
 
 declare module 'discord-akairo' {
@@ -117,6 +117,7 @@ class EveClient extends AkairoClient {
     private async _init(): Promise<void> {
         this.logger.info('Initiating start sequence...')
 
+        await sequelize.sync()
         await this.settings.init()
         this.logger.info('Guild settings initialized.')
 

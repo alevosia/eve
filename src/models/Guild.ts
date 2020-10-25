@@ -2,13 +2,13 @@ import { Sequelize, Model, DataTypes } from 'sequelize'
 import { join } from 'path'
 import { __rootdir__ } from '../root'
 
-const sequelize = new Sequelize({
+export const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: join(__rootdir__, '..', 'database.sqlite'),
     logging: false
 })
 
-class Guild extends Model {}
+export class Guild extends Model {}
 
 Guild.init(
     {
@@ -21,7 +21,3 @@ Guild.init(
     },
     { sequelize, modelName: 'guild' }
 )
-
-sequelize.sync()
-
-export default Guild
